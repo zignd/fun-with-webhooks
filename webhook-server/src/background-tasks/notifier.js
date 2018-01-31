@@ -1,11 +1,11 @@
 'use strict'
 
 const EventEmitter = require('events')
-const Joi = require('joi')
 const request = require('request-promise')
 const Op = require('sequelize').Op
 const VError = require('verror')
 
+const callSchema = require('./call-schema')
 const rabbitmq = require('../rabbitmq')
 
 class Notifier extends EventEmitter {
@@ -20,10 +20,6 @@ class Notifier extends EventEmitter {
 
 		this._initialized = false
 		this._isStopping = false
-		this._callSchema = Joi.object().keys({
-			name: Joi.string().min(3).max(255).required(),
-			contactNumber: Joi.string().length(14).required(),
-		})
 	}
 
 	async init() {
@@ -42,7 +38,7 @@ class Notifier extends EventEmitter {
 			await this._ch.consume(this._callsQueue, async (msg) => {
 				try {
 					const content = JSON.parse(msg.content.toString())
-					const result = this._callSchema.validate(content)
+					const result = callSchema.validate(content)
 					if (result.error) {
 						throw new VError({
 							info: result.error.details,
@@ -52,13 +48,13 @@ class Notifier extends EventEmitter {
 					try {
 						await this._notify(content)
 					} catch (err) {
-						this.emit('consumerError', new VError({
+						this.emit('clientError', new VError({
 							cause: err,
 							info: { content },
 						}, 'Failed to notify the client'))
 					}
 				} catch (err) {
-					this.emit('consumerError', new VError(err, 'Malformed message content'))
+					this.emit('error', new VError(err, 'Malformed message content'))
 				}
 
 				await this._ch.ack(msg)

@@ -2,14 +2,12 @@
 
 const config = require('./config')
 
-const bodyParser = require('body-parser')
 const bunyan = require('bunyan')
 const http = require('http')
 const resolve = require('resolve-dir')
 const VError = require('verror')
 
 const CallsHandler = require('./background-tasks/calls-handler')
-const calls = require('./routes/calls')
 const express = require('./express')
 const sqlite = require('./sqlite')
 const webhook = require('./webhook')
@@ -45,18 +43,12 @@ const init = async () => {
 	const queue901 = config['rabbitmq-901-queue']
 
 	const callsHandler900 = new CallsHandler(db, rabbitMQURI, queue900, prefetchCount, 3000)
-	callsHandler900.on('consumerError', (err) => {
-		log.error(err)
-	})
 	callsHandler900.on('error', (err) => {
 		log.error(err)
 		process.exit(1)
 	})
 
 	const callsHandler901 = new CallsHandler(db, rabbitMQURI, queue901, prefetchCount, 2000)
-	callsHandler901.on('consumerError', (err) => {
-		log.error(err)
-	})
 	callsHandler901.on('error', (err) => {
 		log.error(err)
 		process.exit(1)

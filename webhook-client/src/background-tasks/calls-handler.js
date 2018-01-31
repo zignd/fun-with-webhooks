@@ -52,13 +52,13 @@ class CallsHandler extends EventEmitter {
 					try {
 						await this._handleCall(content.callId, this._sleepMs)
 					} catch (err) {
-						this.emit('consumerError', new VError({
+						this.emit('error', new VError({
 							cause: err,
 							info: { content },
 						}, 'Failed to handle the call'))
 					}
 				} catch (err) {
-					this.emit('consumerError', new VError(err, 'Malformed message content'))
+					this.emit('error', new VError(err, 'Malformed message content'))
 				}
 
 				await this._ch.ack(msg)

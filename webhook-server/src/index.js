@@ -42,8 +42,8 @@ async function init() {
 	const requestTimeout = config['request-timeout-ms']
 
 	const notifier = new Notifier(db, rabbitMQURI, callsQueue, prefetchCount, requestTimeout)
-	notifier.on('consumerError', (err) => {
-		log.error(err)
+	notifier.on('clientError', (err) => {
+		log.warn(err)
 	})
 	notifier.on('error', (err) => {
 		log.error(err)

@@ -28,9 +28,11 @@ class RandomCallsProducer extends EventEmitter {
 				}
 			})
 			this._ch.on('error', (err) => {
-				this.emit('error', new VError(err, 'An error occurred in the connection to the RabbitMQ server'))
+				if (!this._isStopping) {
+					this.emit('error', new VError(err, 'An error occurred in the connection to the RabbitMQ server'))
+				}
 			})
-			
+
 			await this._ch.assertQueue(this._callsQueue)
 			this._intervalID = setInterval(async () => {
 				try {
@@ -46,7 +48,9 @@ class RandomCallsProducer extends EventEmitter {
 						})
 					}, { concurrency: 10 })
 				} catch (err) {
-					this.emit('error', new VError(err, 'Failed to produce a batch of random calls'))
+					if (!this._isStopping) {
+						this.emit('error', new VError(err, 'Failed to produce a batch of random calls'))
+					}
 				}
 			}, 10000)
 		} catch (err) {
@@ -84,7 +88,7 @@ class RandomCallsProducer extends EventEmitter {
 	async stop() {
 		if (!this._initialized)
 			return
-		
+
 		this._isStopping = true
 		clearInterval(this._intervalID)
 		await this._ch.close()
