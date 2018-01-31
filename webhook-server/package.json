@@ -1,0 +1,25 @@
+{
+  "name": "webhook-server",
+  "version": "0.1.0",
+  "description": "",
+  "scripts": {
+    "start": "node src/index.js | ./node_modules/bunyan/bin/bunyan"
+  },
+  "author": "zignd",
+  "license": "MIT",
+  "devDependencies": {},
+  "dependencies": {
+    "amqplib": "^0.5.2",
+    "bluebird": "^3.5.1",
+    "body-parser": "^1.18.2",
+    "bunyan": "^1.8.12",
+    "express": "^4.16.2",
+    "joi": "^13.1.1",
+    "request": "^2.83.0",
+    "request-promise": "^4.2.2",
+    "resolve-dir": "^1.0.1",
+    "sequelize": "^4.32.2",
+    "sqlite3": "^3.1.13",
+    "verror": "^1.10.0"
+  }
+}
