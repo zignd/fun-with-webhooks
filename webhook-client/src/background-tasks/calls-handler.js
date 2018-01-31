@@ -6,6 +6,7 @@ const Op = require('sequelize').Op
 const VError = require('verror')
 
 const statusEnum = require('../models/status-enum')
+const helper = require('../helper')
 const rabbitmq = require('../rabbitmq')
 
 class CallsHandler extends EventEmitter {
@@ -77,17 +78,11 @@ class CallsHandler extends EventEmitter {
 			status: statusEnum.Active,
 		}, { where: { id: { [Op.eq]: call.id } } })
 		
-		await this._sleepAsync(ms)
+		await helper.sleepAsync(ms)
 	
 		await this._db.call.update({
 			status: statusEnum.Completed,
 		}, { where: { id: { [Op.eq]: call.id } } })
-	}
-
-	_sleepAsync(ms) {
-		return new Promise((resolve, reject) => {
-			setTimeout(() => { return resolve() }, ms)
-		})
 	}
 
 	async close() {
