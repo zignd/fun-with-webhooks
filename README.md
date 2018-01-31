@@ -10,7 +10,15 @@ The application requires a RabbitMQ server; we can set one up easily using a Doc
 
     $ sudo docker run -d --hostname rabbitmq-webhooks --name rabbitmq-webhooks -p 8080:15672 -p 5672:5672 rabbitmq:3-management
 
-Also, some integration tests require a RabbitMQ server and during the execution of those tests containers will be started and stopped as needed, therefore, make sure you have Docker installed for this reason as well.
+### Tests
+
+The application isn't very complex, therefore, I decided to go mostly with integration tests, it helped me ensure it was behaving correctly. Some integration tests require a RabbitMQ server, they will use Docker containers on the same image used on the previous topic, therefore, make you have this image, `rabbitmq:3-management`, pulled.
+
+    $ sudo docker pull rabbitmq:3-management
+
+Then you can execute the tests, but remember to execute them as root. The Docker API is used to start and stop containers, therefore, you need privileges to interact with it.
+
+    $ sudo npm test
 
 ### Understanding and running the applications in order
 
