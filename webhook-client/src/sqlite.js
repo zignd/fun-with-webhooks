@@ -13,6 +13,7 @@ async function setup(sqliteFile) {
 				global.log.debug(value)
 			}
 		},
+		operatorsAliases: false,
 	})
 
 	const call = sequelize.import(path.join(__dirname, 'models/call.js'))
