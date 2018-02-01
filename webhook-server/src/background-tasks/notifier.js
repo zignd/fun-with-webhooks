@@ -9,12 +9,12 @@ const callSchema = require('./call-schema')
 const rabbitmq = require('../rabbitmq')
 
 class Notifier extends EventEmitter {
-	constructor(db, uri, callsQueue, prefetchCount, requestTimeout) {
+	constructor(db, uri, queue, prefetchCount, requestTimeout) {
 		super()
 
 		this._db = db
 		this._uri = uri
-		this._callsQueue = callsQueue
+		this._queue = queue
 		this._prefetchCount = prefetchCount
 		this._requestTimeout = requestTimeout
 
@@ -24,18 +24,18 @@ class Notifier extends EventEmitter {
 
 	async init() {
 		try {
-			({ conn: this._conn, ch: this._ch } = await rabbitmq.connectToQueue(this._uri, this._callsQueue))
-			this._ch.on('close', () => {
-				if (!this._isStopping) {
-					this.emit('error', new VError('RabbitMQ channel closed for an unexpected reason'))
-				}
+			({ conn: this._conn, ch: this._ch } = await rabbitmq.connectToQueue(this._uri, this._queue))
+			this._conn.on('close', () => {
+				if (!this._isStopping)
+					this.emit('error', new VError('RabbitMQ connection closed for an unexpected reason'))
 			})
-			this._ch.on('error', (err) => {
-				this.emit('error', new VError(err, 'An error occurred in the connection to the RabbitMQ server'))
+			this._conn.on('error', (err) => {
+				if (!this._isStopping)
+					this.emit('error', new VError(err, 'An error occurred in the connection to the RabbitMQ server'))
 			})
 
 			await this._ch.prefetch(this._prefetchCount)
-			await this._ch.consume(this._callsQueue, async (msg) => {
+			await this._ch.consume(this._queue, async (msg) => {
 				try {
 					const content = JSON.parse(msg.content.toString())
 					const result = callSchema.validate(content)
@@ -53,11 +53,12 @@ class Notifier extends EventEmitter {
 							info: { content },
 						}, 'Failed to notify the client'))
 					}
-				} catch (err) {
-					this.emit('error', new VError(err, 'Malformed message content'))
-				}
 
-				await this._ch.ack(msg)
+					await this._ch.ack(msg)
+				} catch (err) {
+					if (!this._isStopping)
+						this.emit('error', new VError(err, 'Failed to consume the message'))
+				}
 			})
 		} catch (err) {
 			throw new VError(err, 'Failed to initialize Notifier')
@@ -113,7 +114,6 @@ class Notifier extends EventEmitter {
 			return
 
 		this._isStopping = true
-		await this._ch.close()
 		await this._conn.close()
 	}
 }

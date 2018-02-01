@@ -19,13 +19,14 @@ function errorHandler(err, req, res, next) {
 	res.status(500).send({ message: 'An unexpected error occurred.' })
 }
 
-function createApp(db, port) {
+function createApp(db, disableErrorHandling) {
 	const app = express()
 	app.use(addDb(db))
 	app.use(bodyParser.json())
 	app.post('/webhook', webhook)
-	app.use(errorHandler)
-	app.set('port', port)
+	if (!disableErrorHandling) {
+		app.use(errorHandler)
+	}
 	return app
 }
 

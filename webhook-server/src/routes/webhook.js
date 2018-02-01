@@ -22,9 +22,8 @@ async function main(req, res, next) {
 	try {
 		const client = await req.db.client.findOne({ where: { name: { [Op.eq]: req.body.name } } })
 		if (client) {
-			if (client.enabled) {
+			if (client.enabled)
 				return res.status(400).send([{ errorCode: 'ALREADY_REGISTERED', message: 'There\'s already a client with the same name' }])
-			}
 
 			await req.db.client.update({
 				errorsCounter: 0,

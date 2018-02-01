@@ -1,6 +1,10 @@
 module.exports = {
     "globals": {
         "log": true,
+        "describe": true,
+        "it": true,
+        "beforeEach": true,
+        "afterEach": true,
     },
     "env": {
         "es6": true,

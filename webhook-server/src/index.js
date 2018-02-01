@@ -33,7 +33,7 @@ async function init() {
 
 	const db = await sqlite.setup(config['sqlite-file'])
 
-	const app = express.createApp(db, config['server-port'])
+	const app = express.createApp(db)
 	const server = http.createServer(app)
 	
 	const rabbitMQURI = config['rabbitmq-uri']
@@ -50,7 +50,19 @@ async function init() {
 		process.exit(1)
 	})
 
-	const randomCallsProducer = new RandomCallsProducer(db, rabbitMQURI, callsQueue)
+	const contactNumbers = [
+		'(11) 1111-1010',
+		'(11) 1111-1111',
+		'(11) 2222-2222',
+		'(11) 3333-3333',
+		'(11) 4444-4444',
+		'(11) 5555-5555',
+		'(11) 6666-6666',
+		'(11) 7777-7777',
+		'(11) 8888-8888',
+		'(11) 9999-9999',
+	]
+	const randomCallsProducer = new RandomCallsProducer(db, rabbitMQURI, callsQueue, contactNumbers, 10000)
 	randomCallsProducer.on('error', (err) => {
 		log.error(err)
 		process.exit(1)
