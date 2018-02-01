@@ -33,7 +33,6 @@ function createApp(db, cfg) {
 	app.use(bodyParser.json())
 	app.post('/calls', calls)
 	app.use(errorHandler)
-	app.set('port', cfg['server-port'])
 	return app
 }
 
