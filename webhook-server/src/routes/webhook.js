@@ -29,8 +29,9 @@ async function main(req, res, next) {
 				errorsCounter: 0,
 				enabled: true,
 			}, { where: { id: { [Op.eq]: client.id } } })
+		} else {
+			await req.db.client.create(req.body)
 		}
-		await req.db.client.create(req.body)
 		return res.end()
 	} catch (err) {
 		next(new VError(err, 'Unexpected error in the main middleware for the /webhook endpoint'))
