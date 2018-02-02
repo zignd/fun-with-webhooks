@@ -43,12 +43,18 @@ const init = async () => {
 	const queue901 = config['rabbitmq-901-queue']
 
 	const callsHandler900 = new CallsHandler(db, rabbitMQURI, queue900, prefetchCount, 3000)
+	callsHandler900.on('warning', (err) => {
+		log.warn(err)
+	})
 	callsHandler900.on('error', (err) => {
 		log.error(err)
 		process.exit(1)
 	})
 
 	const callsHandler901 = new CallsHandler(db, rabbitMQURI, queue901, prefetchCount, 2000)
+	callsHandler901.on('warning', (err) => {
+		log.warn(err)
+	})
 	callsHandler901.on('error', (err) => {
 		log.error(err)
 		process.exit(1)

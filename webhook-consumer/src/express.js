@@ -4,7 +4,8 @@ const bodyParser = require('body-parser')
 const express = require('express')
 const path = require('path')
 
-const calls = require('./routes/calls')
+const getCalls = require('./routes/get-calls')
+const postCalls = require('./routes/post-calls')
 
 function addDb(db) {
 	return function (req, res, next) {
@@ -35,7 +36,8 @@ function createApp(db, cfg) {
 	app.use(bodyParser.json())
 
 	app.use(express.static(path.join(__dirname, '../client/build')))
-	app.post('/calls', calls)
+	app.get('/calls', getCalls)
+	app.post('/calls', postCalls)
 	app.get('*', function (req, res) {
 		res.sendFile(path.join(__dirname, '../client/build/index.html'))
 	})

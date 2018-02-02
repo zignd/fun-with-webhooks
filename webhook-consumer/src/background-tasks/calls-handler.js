@@ -69,8 +69,10 @@ class CallsHandler extends EventEmitter {
 
 	async _handleCall(id) {
 		const call = await this._db.call.findById(id)
-		if (!call)
-			throw new VError({ info: { id } }, 'Could not find a call with the provided id')
+		if (!call) {
+			this.emit('warning', new VError({ info: { id } }, 'Could not find a call with the provided id'))
+			return
+		}
 		
 		await this._db.call.update({
 			status: statusEnum.Active,

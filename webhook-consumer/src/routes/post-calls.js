@@ -32,7 +32,7 @@ async function main(req, res, next) {
 
 		return res.end()
 	} catch (err) {
-		next(new VError(err, 'Unexpected error in the main middleware for the /calls endpoint'))
+		return next(new VError(err, 'Unexpected error in the main middleware for the POST /calls endpoint'))
 	}
 }
 

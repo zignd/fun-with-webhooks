@@ -8,14 +8,6 @@ function call(sequelize, DataTypes) {
 			allowNull: false,
 			primaryKey: true,
 		},
-		contactId: {
-			type: DataTypes.INTEGER,
-			allowNull: false,
-			references: {
-				model: 'contacts',
-				key: 'id',
-			},
-		},
 		status: {
 			type: DataTypes.INTEGER,
 			allowNull: false,

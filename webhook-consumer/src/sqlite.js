@@ -1,6 +1,5 @@
 'use strict'
 
-const path = require('path')
 const resolve = require('resolve-dir')
 const Sequelize = require('sequelize')
 
@@ -16,8 +15,9 @@ async function setup(sqliteFile) {
 		operatorsAliases: false,
 	})
 
-	const call = sequelize.import(path.join(__dirname, 'models/call.js'))
-	const contact = sequelize.import(path.join(__dirname, 'models/contact.js'))
+	const contact = require('./models/contact')(sequelize, Sequelize)
+	const call = require('./models/call')(sequelize, Sequelize)
+	call.belongsTo(contact)
 
 	await sequelize.sync()
 
