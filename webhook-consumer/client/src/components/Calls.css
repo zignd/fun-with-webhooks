@@ -1,0 +1,8 @@
+.btn-filter-parent {
+	position: relative;
+}
+
+.btn-filter {
+	position: absolute;
+	bottom: 0;
+}
