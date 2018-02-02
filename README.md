@@ -18,6 +18,7 @@ The application isn't very complex, therefore, I decided to go mostly with integ
 
 Then you can execute the tests, but remember to execute them as root. The Docker API is used to start and stop containers, therefore, you need privileges to interact with it.
 
+    $ npm install
     $ sudo npm test
 
 ### Understanding and running the applications in order
@@ -36,6 +37,7 @@ This application is composed of 3 subdivisions:
 This application should be executed first, so that the another one explained in the next topic can register itself on the `/webhook` endpoint.
 
     $ cd webhook-server
+    $ npm install
     $ npm start
 
 ##### Configuration file (`webhook-server/src/config.js`)
@@ -62,6 +64,7 @@ This application is composed of 3 subdivisions, although a bit different from th
 This application should be executed after the `webhook-server`, so that in can register itself on the webhook.
 
     $ cd webhook-consumer
+    $ npm install
     $ npm start
 
 ##### Configuration file (`webhook-consumer/src/config.js`)
