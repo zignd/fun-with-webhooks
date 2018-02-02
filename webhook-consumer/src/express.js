@@ -2,6 +2,7 @@
 
 const bodyParser = require('body-parser')
 const express = require('express')
+const path = require('path')
 
 const calls = require('./routes/calls')
 
@@ -28,11 +29,19 @@ function errorHandler(err, req, res, next) {
 
 function createApp(db, cfg) {
 	const app = express()
+
 	app.use(addDb(db))
 	app.use(addConfig(cfg))
 	app.use(bodyParser.json())
+
+	app.use(express.static(path.join(__dirname, '../client/build')))
 	app.post('/calls', calls)
+	app.get('*', function (req, res) {
+		res.sendFile(path.join(__dirname, '../client/build/index.html'))
+	})
+
 	app.use(errorHandler)
+
 	return app
 }
 

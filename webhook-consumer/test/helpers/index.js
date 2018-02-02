@@ -84,8 +84,8 @@ async function createRabbitMQContainer() {
 
 module.exports = {
 	BasicConsumer,
-	Queue900: 'webhook-client-900',
-	Queue901: 'webhook-client-901',
+	Queue900: 'webhook-consumer-900',
+	Queue901: 'webhook-consumer-901',
 	createTemporaryDB,
 	createRabbitMQContainer,
 }

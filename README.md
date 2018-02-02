@@ -50,31 +50,31 @@ Property Name          | Default Value                    | Description
 `request-timeout-ms`   | `10000`                          | Client applications are supposed to answer in X milliseconds. We can't wait forever because that would lock the server, and prevent it from notifying other clients. (Related to the `rabbitmq-prefetch` property)
 `log-file`             | `"~/webhook-registry.log"`       | Location to which the log file will be written to.
 
-#### `webhook-client`
+#### `webhook-consumer`
 
 This application is composed of 3 subdivisions, although a bit different from the previous application:
-1. When it starts, it registers itself on the first application's `/webhook` endpoint by sending an HTTP request to it. (`webhook-client/src/webhook.js`)
-2. An HTTP server with a `/calls` endpoint responsible for receiving call events. It first checks its type for `call.standby`; in case it it follows by checking wether or not this call is a first time contact by looking for the contact number in the database; in case it is the call is delegated to a RabbitMQ queue for a specialized extension number in the call center, which is `900`; in case it is not, it is delegated to the queue for the extension number `901`. It should be noticed that contact numbers, and data for each call event and its current status in the call center are being stored in the database. This data is provided through endpoints used by the dashboard application you can check at `/` through your browser. (`webhook-client/src/express.js`)
-3. A background task responsible for mocking the call center, it basically consumes the messages sent to both extension numbers' queues. Taking 3 seconds for calls sent to `900` and 2 seconds for the ones sent to `901`. (`webhook-client/src/background-tasks/calls-handler.js`)
+1. When it starts, it registers itself on the first application's `/webhook` endpoint by sending an HTTP request to it. (`webhook-consumer/src/webhook.js`)
+2. An HTTP server with a `/calls` endpoint responsible for receiving call events. It first checks its type for `call.standby`; in case it it follows by checking wether or not this call is a first time contact by looking for the contact number in the database; in case it is the call is delegated to a RabbitMQ queue for a specialized extension number in the call center, which is `900`; in case it is not, it is delegated to the queue for the extension number `901`. It should be noticed that contact numbers, and data for each call event and its current status in the call center are being stored in the database. This data is provided through endpoints used by the dashboard application you can check at `/` through your browser. (`webhook-consumer/src/express.js`)
+3. A background task responsible for mocking the call center, it basically consumes the messages sent to both extension numbers' queues. Taking 3 seconds for calls sent to `900` and 2 seconds for the ones sent to `901`. (`webhook-consumer/src/background-tasks/calls-handler.js`)
 
 ##### Running it
 
 This application should be executed after the `webhook-server`, so that in can register itself on the webhook.
 
-    $ cd webhook-client
+    $ cd webhook-consumer
     $ npm start
 
-##### Configuration file (`webhook-client/src/config.js`)
+##### Configuration file (`webhook-consumer/src/config.js`)
 
 Property Name          | Default Value                     | Description
 -----------------------|-----------------------------------|-------------
 `server-port`          | `9001`                            | Port to which the HTTP server will listen.
-`sqlite-file`          | `"~/webhook-client.sqlite"`       | SQLite database file path.
-`client-name`          | `"webhook-client"`                | Name used to register the application on the webhook.
+`sqlite-file`          | `"~/webhook-consumer.sqlite"`       | SQLite database file path.
+`client-name`          | `"webhook-consumer"`                | Name used to register the application on the webhook.
 `webhook-server-url`   | `"http://localhost:9000/webhook"` | The webhook server URL with the endpoint.
 `callback-url`         | `"http://localhost:9001/calls"`   | The callback URL to which the call events will be sent.
 `rabbitmq-uri`         | `"amqp://guest:guest@localhost"`  | URI to the RabbitMQ server.
-`rabbitmq-900-queue`   | `"webhook-client-900"`            | Queue for the extension number `900`
-`rabbitmq-901-queue`   | `"webhook-client-901"`            | Queue for the extension number `901`
+`rabbitmq-900-queue`   | `"webhook-consumer-900"`            | Queue for the extension number `900`
+`rabbitmq-901-queue`   | `"webhook-consumer-901"`            | Queue for the extension number `901`
 `rabbitmq-prefetch`    | `2`                               | Number of concurrent calls the each instance of the background task previously mentioned can handle.
-`log-file`             | `"~/webhook-client.log"`          | Location to which the log file will be written to.
+`log-file`             | `"~/webhook-consumer.log"`          | Location to which the log file will be written to.
