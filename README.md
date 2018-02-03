@@ -81,3 +81,7 @@ Property Name          | Default Value                     | Description
 `rabbitmq-901-queue`   | `"webhook-consumer-901"`            | Queue for the extension number `901`
 `rabbitmq-prefetch`    | `2`                               | Number of concurrent calls the each instance of the background task previously mentioned can handle.
 `log-file`             | `"~/webhook-consumer.log"`          | Location to which the log file will be written to.
+
+##### Screenshot of the dashboard in action
+
+![Dashboard](https://i.imgur.com/4l0bY00.png)
